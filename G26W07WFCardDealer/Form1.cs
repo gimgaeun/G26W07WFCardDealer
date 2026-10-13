@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
+
 namespace G26W07WFCardDealer
 {
     public partial class Form1 : Form
@@ -12,26 +17,39 @@ namespace G26W07WFCardDealer
             string[] suits = ["spades", "hearts", "diamonds", "clubs"];
             string[] values = ["ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"];
 
+            PictureBox[] pictureBoxes = [ Card1, Card2, Card3, Card4, Card5 ];
+
             Random random = new Random();
-            int card = random.Next(suits.Length * values.Length);
 
-            string suit = suits[card / values.Length];
-            string value = values[card % values.Length];
+            //HashSet은 중복된 값을 허용하지 않음
+            HashSet<int> selectedCards = new HashSet<int>();
 
-            //if (value == "jack" || value == "queen" || value == "king") {
-            //    suit += "2";
-            //}
-
-            if (value is "jack" or "queen" or "king")
+            while (selectedCards.Count < 5)
             {
-                suit += "2";
+                int card = random.Next(suits.Length * values.Length);
+                selectedCards.Add(card);
             }
 
-            string name = $"{value}_of_{suit}";
+            int index = 0;
 
-            Card1.Image = Properties.Resources.ResourceManager
+            foreach (int card in selectedCards)
+            {
+                string suit = suits[card / values.Length];
+                string value = values[card % values.Length];
+
+                if (value is "jack" or "queen" or "king")
+                {
+                    suit += "2";
+                }
+
+                string name = $"{value}_of_{suit}";
+
+                pictureBoxes[index].Image = Properties.Resources.ResourceManager
                 .GetObject(name) as Image
                 ?? Properties.Resources.red_joker;
+
+                index++;
+            }
 
         }
     }
